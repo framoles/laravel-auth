@@ -16,7 +16,7 @@ class HomeController extends Controller
     public function index()
     {
         $dbPost = Post::all();
-        return view("admin.home");
+        return view("admin.posts.index",compact("dbPost"));
     }
 
     /**
@@ -27,6 +27,7 @@ class HomeController extends Controller
     public function create()
     {
         //
+        return view("admin.posts.create");
     }
 
     /**
@@ -38,6 +39,28 @@ class HomeController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            "title" => "required|max:255",
+            "content" => "required"
+        ]);
+
+        $data = $request->all();
+        $newPost = new Post();
+        $newPost->fill($data);
+        $slug = Str::slug($newPost->title);
+        $aSlug = $slug;
+        $postFound = Post::where("slug",$slug)->first();
+        $count = 1;
+        while($postFound)
+        {
+            $aSlug = $slug."-".$count;
+            $count++;
+            $postFound = Post::where("slug",$aSlug)->first();
+        }
+        $newPost->slug = $aSlug;
+        $newPost->save();
+
+        return redirect()->route("admin.posts.index");
     }
 
     /**
