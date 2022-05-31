@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Post;
 
 class HomeController extends Controller
 {
@@ -15,8 +14,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $dbPost = Post::all();
-        return view("admin.posts.index",compact("dbPost"));
+        //
+        return view("admin.home");
     }
 
     /**
@@ -27,7 +26,6 @@ class HomeController extends Controller
     public function create()
     {
         //
-        return view("admin.posts.create");
     }
 
     /**
@@ -39,28 +37,6 @@ class HomeController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([
-            "title" => "required|max:255",
-            "content" => "required"
-        ]);
-
-        $data = $request->all();
-        $newPost = new Post();
-        $newPost->fill($data);
-        $slug = Str::slug($newPost->title);
-        $aSlug = $slug;
-        $postFound = Post::where("slug",$slug)->first();
-        $count = 1;
-        while($postFound)
-        {
-            $aSlug = $slug."-".$count;
-            $count++;
-            $postFound = Post::where("slug",$aSlug)->first();
-        }
-        $newPost->slug = $aSlug;
-        $newPost->save();
-
-        return redirect()->route("admin.posts.index");
     }
 
     /**
@@ -69,10 +45,9 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($id)
     {
         //
-        return view("admin.posts.show", compact("post"));
     }
 
     /**
@@ -81,10 +56,9 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
         //
-        return view("admin.posts.edit",compact("post"));
     }
 
     /**
@@ -97,13 +71,6 @@ class HomeController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $request->validate([
-            "title" => "required|max:255",
-            "content" => "required"
-        ]);
-        $data = $request->all();
-        $post->update($data);
-        return redirect()->route("admin.posts.show",$post->id);
     }
 
     /**
@@ -112,10 +79,8 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
         //
-        $post->delete();
-        return redirect()->route("admin.posts.index");
     }
 }

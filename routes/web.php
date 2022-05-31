@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +23,11 @@ Route::middleware('auth')
     ->prefix('admin')
     ->group(function (){
         Route::get('/', 'HomeController@index')
-        ->name('home');
+        ->name('index');
+        Route::resource('/posts', "PostController");
     });
 
 Route::get("{any?}", function(){
     return view("guest.home");
 })->where("any",".*");
+
