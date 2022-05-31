@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Str;
 
 use App\Post;
 
@@ -50,17 +49,7 @@ class PostController extends Controller
         $data = $request->all();
         $newPost = new Post();
         $newPost->fill($data);
-        $slug = Str::slug($newPost->title);
-        $aSlug = $slug;
-        $postFound = Post::where("slug",$slug)->first();
-        $count = 1;
-        while($postFound)
-        {
-            $aSlug = $slug."-".$count;
-            $count++;
-            $postFound = Post::where("slug",$aSlug)->first();
-        }
-        $newPost->slug = $aSlug;
+        $newPost->slug = Post::getSlug($newPost->title);
         $newPost->save();
 
         return redirect()->route("admin.posts.index");
@@ -103,21 +92,7 @@ class PostController extends Controller
 
         $data = $request->all();
         $post->update($data);
-        //slug
-        $slug = Str::slug($post->title);
-        $aSlug = $slug;
-        $postFound = Post::where("slug",$slug)->first();
-        $count = 1;
-        while($postFound)
-        {
-            $aSlug = $slug."-".$count;
-            $count++;
-            $postFound = Post::where("slug",$aSlug)->first();
-        }
-        $post->slug = $aSlug;
-        //end slug
-
-
+        $post->slug = Post::getSlug($post->title);
         return redirect()->route("admin.posts.show",$post->id);
     }
 
